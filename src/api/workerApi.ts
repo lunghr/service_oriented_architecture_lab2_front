@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Worker, NewWorker, WorkerUpdate, WorkerResponse } from '../types/worker'
+import type {Worker, NewWorker, WorkerUpdate, WorkerResponse} from '../types/worker'
 
 const WORKER_API = 'https://localhost:8443/jaxrs-service/api'
 
@@ -9,7 +9,7 @@ const api = axios.create({
 export const workerApi = {
     getWorkers: async (page = 1, size = 10): Promise<WorkerResponse> => {
         const response = await api.get<WorkerResponse>('/workers', {
-            params: { page, size }
+            params: {page, size}
         })
         return response.data
     },
@@ -26,5 +26,20 @@ export const workerApi = {
 
     deleteWorker: async (id: number): Promise<void> => {
         await api.delete(`/workers/${id}`)
+    },
+
+    searchWorkers: async (
+        page = 1,
+        size = 10,
+        sort: string[] = [],
+        filter: string[] = []
+    ): Promise<WorkerResponse> => {
+        const response = await api.post<WorkerResponse>('/workers/search', {
+            sort,
+            filter
+        }, {
+            params: {page, size}
+        })
+        return response.data
     }
 }
