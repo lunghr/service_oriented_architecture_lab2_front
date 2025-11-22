@@ -12,13 +12,13 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
 
 import type {Worker, Position, Status, OrganizationType} from "../types/worker";
+import {toast} from "react-toastify";
 
 
 const positionOptions = ["LABORER", "HUMAN_RESOURCES", "HEAD_OF_DIVISION", "HEAD_OF_DEPARTMENT", "CLEANER"] as const;
 const statusOptions = ["HIRED", "RECOMMENDED_FOR_PROMOTION", "PROBATION", "FIRED"] as const;
 const organizationTypeOptions = ["TRUST", "PRIVATE_LIMITED_COMPANY", "OPEN_JOINT_STOCK_COMPANY", "PUBLIC"] as const;
 
-// СХЕМА — всё, что нужно
 const workerSchema = z.object({
     name: z.string().min(1, "ФИО обязательно").max(256, "Максимум 256 символов"),
 
@@ -198,9 +198,20 @@ export default function WorkerModal({
 
 
     const onSubmit = (data: WorkerFormData) => {
+        const { x, y } = data.coordinates;
+        const salary = data.salary;
+
+        const MAX_SAFE = 1e16;
+        if (Math.abs(x) > MAX_SAFE || Math.abs(y) > MAX_SAFE || (salary != null && Math.abs(salary) > MAX_SAFE)) {
+            toast.error("Вы ввели слишком большое число в одно из полей. Попробуйте еще раз с меньшим значением.");
+            onHide();
+            return;
+        }
+
         onSave(buildWorkerPayload(data, worker));
         onHide();
     };
+
 
     return (
         <Modal show={show} onHide={onHide} size="lg" centered>
@@ -243,6 +254,7 @@ export default function WorkerModal({
                                     {...register("coordinates.x")}
                                     isInvalid={!!errors.coordinates?.x}
                                     placeholder="123.45 или 123,45"
+                                    maxLength={16}
                                 />
                                 <Form.Control.Feedback
                                     type="invalid">{errors.coordinates?.x?.message}</Form.Control.Feedback>
@@ -255,6 +267,7 @@ export default function WorkerModal({
                                     {...register("coordinates.y")}
                                     isInvalid={!!errors.coordinates?.y}
                                     placeholder="-500.67"
+                                    maxLength={16}
                                 />
                                 <Form.Control.Feedback
                                     type="invalid">{errors.coordinates?.y?.message}</Form.Control.Feedback>
@@ -268,6 +281,7 @@ export default function WorkerModal({
                                     {...register("salary")}
                                     isInvalid={!!errors.salary}
                                     placeholder="не указана"
+                                    maxLength={16}
                                 />
                                 <Form.Control.Feedback type="invalid">{errors.salary?.message}</Form.Control.Feedback>
                             </Form.Group>
@@ -332,6 +346,7 @@ export default function WorkerModal({
                                     inputMode="numeric"
                                     pattern="[0-9]*"
                                     placeholder="не указано"
+                                    maxLength={16}
                                     {...register("organization.employeesCount")}/>
                             </Form.Group>
                         </Col>

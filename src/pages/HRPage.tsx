@@ -5,7 +5,7 @@ import axios from 'axios'
 
 type ApiErrorResponse = { message?: string }
 
-const HR_API = 'https://localhost:8444/spring-service/api'
+const HR_API = 'https://localhost:8544/spring-service/api'
 
 const api = axios.create({
     baseURL: HR_API

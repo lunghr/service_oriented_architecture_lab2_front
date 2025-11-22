@@ -1,7 +1,16 @@
+// vite.config.js
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+    plugins: [react()],
+    server: {
+        https: {
+            key: './localhost.key',
+            cert: './localhost.crt',
+        },
+        host: true,
+        port: 5173,
+        open: true
+    }
 })

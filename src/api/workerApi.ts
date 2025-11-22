@@ -1,7 +1,7 @@
 import axios from 'axios'
 import type {Worker, NewWorker, WorkerUpdate, WorkerResponse} from '../types/worker'
 
-const WORKER_API = 'https://localhost:8443/jaxrs-service/api'
+const WORKER_API = 'https://localhost:8543/jaxrs-service/api'
 
 const api = axios.create({
     baseURL: WORKER_API,
